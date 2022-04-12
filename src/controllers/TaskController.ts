@@ -7,7 +7,23 @@ export default class TaskController {
     const { list } = req.params;
     const { description } = req.body;
 
+    if (!list) {
+      return res.status(400).json({ message: "List id is required" });
+    }
+
+    if (!description) {
+      return res.status(400).json({ message: "Missing description" });
+    }
+
     try {
+      const checkList = await List.findById(list);
+
+      if (!checkList) {
+        return res.status(404).json({
+          message: "List not found",
+        });
+      }
+
       const task = await Task.create({
         list,
         description,
@@ -28,8 +44,16 @@ export default class TaskController {
   getTask = async (req: Request, res: Response) => {
     const { id } = req.params;
 
+    if (!id) {
+      return res.status(400).json({ message: "Task id is required" });
+    }
+
     try {
       const task = await Task.findById(id);
+
+      if (!task) {
+        return res.status(404).json({ message: "Task not found" });
+      }
 
       return res.status(200).json(task);
     } catch (error) {
@@ -40,8 +64,16 @@ export default class TaskController {
   updateTask = async (req: Request, res: Response) => {
     const { id } = req.params;
 
+    if (!id) {
+      return res.status(400).json({ message: "Task id is required" });
+    }
+
     try {
       const task = await Task.findByIdAndUpdate(id, req.body, { new: true });
+
+      if (!task) {
+        return res.status(404).json({ message: "Task not found" });
+      }
 
       return res.status(200).json(task);
     } catch (error) {
@@ -52,18 +84,16 @@ export default class TaskController {
   deleteTask = async (req: Request, res: Response) => {
     const { id } = req.params;
 
+    if (!id) {
+      return res.status(400).json({ message: "Task id is required" });
+    }
+
     try {
-      await Task.findByIdAndDelete(id);
-      
-      /* TODO: When deleting a task, it won't update the list */
-      await List.updateMany(
-        {
-          tasks: {
-            $in: id,
-          },
-        },
-        { $pull: { tasks: id } }
-      );
+      const deleteTask = await Task.findByIdAndDelete(id);
+
+      if (!deleteTask) {
+        return res.status(404).json({ message: "Task not found" });
+      }
 
       return res.status(200).json({ message: "Task deleted" });
     } catch (error) {
