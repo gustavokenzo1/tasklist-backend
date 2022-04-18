@@ -1,6 +1,6 @@
 # Desafio1 NodeJS Orc
 
-Repositório para o desafio 1 da Trilha de NodeJS da Orc'estra Gamificação
+Repositório para o desafio 1 da Trilha de NodeJS da Orc'estra Gamificação.
 
 # Como rodar
 
