@@ -1,9 +1,14 @@
-const { Schema, model } = require("mongoose");
+import { model, Schema } from "mongoose";
 
-const listModel = new Schema({
+const ListSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true,
+  },
+
+  name: {
+    type: String,
     required: true,
   },
 
@@ -11,12 +16,7 @@ const listModel = new Schema({
     type: String,
     required: true,
   },
-
-  tasks: {
-    type: [Schema.Types.Object],
-    ref: "Task",
-  },
 });
 
-const List = model("List", listModel);
+const List = model("List", ListSchema);
 export default List;

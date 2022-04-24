@@ -1,25 +1,37 @@
 import ListController from "../controllers/ListController";
 import { Request, Response } from "express";
+import ensureAuthenticated from "../middleware/auth";
 
-const { Router } = require("express");
+const listRoutes = require("express").Router();
 
-const listRoutes = Router();
 const listController = new ListController();
 
-listRoutes.post("/", (req: Request, res: Response) => {
+listRoutes.post("/", ensureAuthenticated, (req: Request, res: Response) => {
   listController.createList(req, res);
 });
 
-listRoutes.put("/:id", (req: Request, res: Response) => {
+listRoutes.patch("/:id", ensureAuthenticated, (req: Request, res: Response) => {
   listController.updateList(req, res);
 });
 
-listRoutes.delete("/:id", (req: Request, res: Response) => {
-  listController.deleteListAndItsTasks(req, res);
+listRoutes.patch("/", ensureAuthenticated, (req: Request, res: Response) => {
+  return res.send({ error: "Missing list id" });
 });
 
-listRoutes.get("/", (req: Request, res: Response) => {
-  listController.getUserLists(req, res);
+listRoutes.delete(
+  "/:id",
+  ensureAuthenticated,
+  (req: Request, res: Response) => {
+    listController.deleteList(req, res);
+  }
+);
+
+listRoutes.get("/all", ensureAuthenticated, (req: Request, res: Response) => {
+  listController.getAllUserLists(req, res);
+});
+
+listRoutes.get("/:id", ensureAuthenticated, (req: Request, res: Response) => {
+  listController.getOneList(req, res);
 });
 
 export default listRoutes;

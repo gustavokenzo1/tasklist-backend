@@ -1,25 +1,33 @@
-import TaskController from "../controllers/TaskController";
 import { Request, Response } from "express";
+import TaskController from "../controllers/TaskController";
+import ensureAuthenticated from "../middleware/auth";
 
-const { Router } = require("express");
+const taskRoutes = require("express").Router();
 
-const taskRoutes = Router();
 const taskController = new TaskController();
 
-taskRoutes.post("/:list", (req: Request, res: Response) => {
+taskRoutes.post("/:id", ensureAuthenticated, (req: Request, res: Response) => {
   taskController.createTask(req, res);
 });
 
-taskRoutes.get("/:id", (req: Request, res: Response) => {
-  taskController.getTask(req, res);
-});
-
-taskRoutes.put("/:id", (req: Request, res: Response) => {
+taskRoutes.patch("/:id", ensureAuthenticated, (req: Request, res: Response) => {
   taskController.updateTask(req, res);
 });
 
-taskRoutes.delete("/:id", (req: Request, res: Response) => {
-  taskController.deleteTask(req, res);
+taskRoutes.get("/:id", ensureAuthenticated, (req: Request, res: Response) => {
+  taskController.getOneTask(req, res);
 });
+
+taskRoutes.get("/", ensureAuthenticated, (req: Request, res: Response) => {
+  taskController.getAllUserTasks(req, res);
+});
+
+taskRoutes.delete(
+  "/:id",
+  ensureAuthenticated,
+  (req: Request, res: Response) => {
+    taskController.deleteTask(req, res);
+  }
+);
 
 export default taskRoutes;

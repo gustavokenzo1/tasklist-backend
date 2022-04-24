@@ -1,9 +1,15 @@
 const { Schema, model } = require("mongoose");
 
-const taskModel = new Schema({
+const TaskSchema = new Schema({
   list: {
     type: Schema.Types.ObjectId,
     ref: "List",
+    required: true,
+  },
+
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
 
@@ -18,5 +24,5 @@ const taskModel = new Schema({
   },
 });
 
-const Task = model("Task", taskModel);
+const Task = model("Task", TaskSchema);
 export default Task;
